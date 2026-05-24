@@ -20,7 +20,6 @@ set(CLIENT_SOURCES
     ${SOURCE_DIR}/client/cl_scrn.c
     ${SOURCE_DIR}/client/cl_ui.c
     ${SOURCE_DIR}/client/cl_avi.c
-    ${SOURCE_DIR}/client/libmumblelink.c
     ${SOURCE_DIR}/client/snd_altivec.c
     ${SOURCE_DIR}/client/snd_adpcm.c
     ${SOURCE_DIR}/client/snd_dma.c
@@ -42,6 +41,10 @@ set(CLIENT_SOURCES
 add_git_dependency(${SOURCE_DIR}/client/cl_console.c)
 
 set(CLIENT_BINARY ${CLIENT_NAME})
+
+if(ANDROID)
+    set(CLIENT_BINARY main)
+endif()
 
 list(APPEND CLIENT_DEFINITIONS BOTLIB)
 
@@ -76,13 +79,20 @@ list(APPEND CLIENT_BINARY_SOURCES
     ${CLIENT_ASM_SOURCES}
     ${CLIENT_LIBRARY_SOURCES})
 
-add_executable(${CLIENT_BINARY} ${CLIENT_EXECUTABLE_OPTIONS} ${CLIENT_BINARY_SOURCES})
+if(ANDROID)
+    add_library(${CLIENT_BINARY} SHARED ${CLIENT_BINARY_SOURCES})
+else()
+    add_executable(${CLIENT_BINARY} ${CLIENT_EXECUTABLE_OPTIONS} ${CLIENT_BINARY_SOURCES})
+endif()
 
 target_include_directories(     ${CLIENT_BINARY} PRIVATE ${CLIENT_INCLUDE_DIRS})
 target_compile_definitions(     ${CLIENT_BINARY} PRIVATE ${CLIENT_DEFINITIONS})
 target_compile_options(         ${CLIENT_BINARY} PRIVATE ${CLIENT_COMPILE_OPTIONS})
 target_link_libraries(          ${CLIENT_BINARY} PRIVATE ${COMMON_LIBRARIES} ${CLIENT_LIBRARIES})
-target_link_options(            ${CLIENT_BINARY} PRIVATE ${CLIENT_LINK_OPTIONS})
+
+if(NOT ANDROID)
+    target_link_options(            ${CLIENT_BINARY} PRIVATE ${CLIENT_LINK_OPTIONS})
+endif()
 
 set_output_dirs(${CLIENT_BINARY})
 

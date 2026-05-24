@@ -21,7 +21,7 @@ android {
                           "-DBUILD_SERVER=0",
                           "-DUSE_OPENGLES=1",
                           "-DUSE_INTERNAL_SDL=0"
-                cppFlags "-O3", "-fexceptions"
+                cppFlags "-O3"
             }
         }
 
@@ -49,13 +49,12 @@ android {
         }
     }
 
-    // Native build temporarily disabled while engine CMake is configured for Android
-    // externalNativeBuild {
-    //     cmake {
-    //         path file('src/main/cpp/CMakeLists.txt')
-    //         version '3.22.1'
-    //     }
-    // }
+    externalNativeBuild {
+        cmake {
+            path file('../../CMakeLists.txt')
+            version '3.22.1'
+        }
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

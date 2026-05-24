@@ -1,53 +1,51 @@
 package com.openarena2026;
 
+import org.libsdl.app.SDLActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 /**
- * Game activity. Currently a placeholder until the native engine is built.
- * Will become NativeActivity once libopenarena2026.so is compiled.
+ * Game activity that extends SDLActivity.
+ * SDL2 handles native library loading and calls SDL_main in the engine.
  */
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends SDLActivity {
+
+    private static String[] sArguments = new String[0];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        // Immersive fullscreen
-        getWindow().getDecorView().setSystemUiVisibility(
-            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-            | View.SYSTEM_UI_FLAG_FULLSCREEN
-            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        );
-
+        // Build command line arguments for the engine
         String server = getIntent().getStringExtra("server");
         int port = getIntent().getIntExtra("port", 27960);
         String basegame = getIntent().getStringExtra("basegame");
 
-        StringBuilder msg = new StringBuilder("Native engine coming soon!\n");
-        if (server != null) {
-            msg.append("Server: ").append(server).append(":").append(port).append("\n");
-        }
-        if (basegame != null) {
-            msg.append("Game: ").append(basegame).append("\n");
-        }
-        msg.append("\nPress back to return.");
+        java.util.List<String> args = new java.util.ArrayList<>();
 
-        Toast.makeText(this, msg.toString(), Toast.LENGTH_LONG).show();
+        if (basegame != null) {
+            args.add("+set");
+            args.add("com_basegame");
+            args.add(basegame);
+        }
+
+        if (server != null) {
+            args.add("+connect");
+            args.add(server + ":" + port);
+        }
+
+        sArguments = args.toArray(new String[0]);
+
+        super.onCreate(savedInstanceState);
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            );
-        }
+    protected String[] getArguments() {
+        return sArguments;
+    }
+
+    @Override
+    protected String[] getLibraries() {
+        return new String[] {
+            "SDL2",
+            "main"
+        };
     }
 }

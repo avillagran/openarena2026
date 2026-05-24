@@ -13,12 +13,17 @@ set(INTERNAL_SDL_DIR ${SOURCE_DIR}/thirdparty/SDL2-2.32.8)
 
 include(utils/arch)
 
-if(WIN32 OR APPLE)
+if(ANDROID)
+    # Build SDL2 from source for Android
+    add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL2 SDL2-build)
+    set(SDL2_LIBRARIES SDL2::SDL2)
+    set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/external/SDL2/include)
+elseif(WIN32 OR APPLE)
     # On Windows and macOS we have internal SDL binaries we can use
     set(HAVE_INTERNAL_SDL true)
 endif()
 
-if(USE_INTERNAL_SDL AND HAVE_INTERNAL_SDL)
+if(NOT ANDROID AND USE_INTERNAL_SDL AND HAVE_INTERNAL_SDL)
     set(SDL2_INCLUDE_DIRS ${INTERNAL_SDL_DIR}/include)
     list(APPEND CLIENT_DEFINITIONS USE_INTERNAL_SDL_HEADERS)
     list(APPEND RENDERER_DEFINITIONS USE_INTERNAL_SDL_HEADERS)
@@ -52,7 +57,7 @@ if(USE_INTERNAL_SDL AND HAVE_INTERNAL_SDL)
     else()
         message(FATAL_ERROR "HAVE_INTERNAL_SDL set incorrectly; file a bug")
     endif()
-else()
+elseif(NOT ANDROID)
     find_package(SDL2 REQUIRED)
 endif()
 
