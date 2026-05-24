@@ -16,6 +16,7 @@ include(utils/arch)
 if(ANDROID)
     # Build SDL2 from source for Android
     add_subdirectory(${CMAKE_SOURCE_DIR}/external/SDL2 SDL2-build)
+    set_target_properties(SDL2 PROPERTIES PREFIX "lib")
     set(SDL2_LIBRARIES SDL2::SDL2)
     set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/external/SDL2/include)
 elseif(WIN32 OR APPLE)

@@ -2,6 +2,7 @@ package com.openarena2026;
 
 import org.libsdl.app.SDLActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 /**
  * Game activity that extends SDLActivity.
@@ -9,6 +10,7 @@ import android.os.Bundle;
  */
 public class GameActivity extends SDLActivity {
 
+    private static final String TAG = "OpenArena2026";
     private static String[] sArguments = new String[0];
 
     @Override
@@ -19,6 +21,13 @@ public class GameActivity extends SDLActivity {
         String basegame = getIntent().getStringExtra("basegame");
 
         java.util.List<String> args = new java.util.ArrayList<>();
+
+        // Set the home path to the app's external files directory
+        // where baseq3/ or baseoa/ folders are located
+        String homePath = getExternalFilesDir(null).getAbsolutePath();
+        args.add("+set");
+        args.add("fs_homepath");
+        args.add(homePath);
 
         if (basegame != null) {
             args.add("+set");
@@ -32,6 +41,8 @@ public class GameActivity extends SDLActivity {
         }
 
         sArguments = args.toArray(new String[0]);
+
+        Log.i(TAG, "Starting engine with args: " + java.util.Arrays.toString(sArguments));
 
         super.onCreate(savedInstanceState);
     }
