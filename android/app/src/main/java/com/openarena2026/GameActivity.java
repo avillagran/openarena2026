@@ -1,27 +1,42 @@
 package com.openarena2026;
 
-import android.app.NativeActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-/**
- * Native activity that runs the OpenArena engine.
- * The engine is loaded as a native library (.so) and handles its own rendering.
- */
-public class GameActivity extends NativeActivity {
+import androidx.appcompat.app.AppCompatActivity;
 
-    // static {
-    //     System.loadLibrary("openarena2026");
-    // }
+/**
+ * Game activity. Currently a placeholder until the native engine is built.
+ * Will become NativeActivity once libopenarena2026.so is compiled.
+ */
+public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // TODO: Native engine not yet built. Showing placeholder.
-        Toast.makeText(this, "Native engine coming soon!", Toast.LENGTH_LONG).show();
-        finish();
+        // Immersive fullscreen
+        getWindow().getDecorView().setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+            | View.SYSTEM_UI_FLAG_FULLSCREEN
+            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        );
+
+        String server = getIntent().getStringExtra("server");
+        int port = getIntent().getIntExtra("port", 27960);
+        String basegame = getIntent().getStringExtra("basegame");
+
+        StringBuilder msg = new StringBuilder("Native engine coming soon!\n");
+        if (server != null) {
+            msg.append("Server: ").append(server).append(":").append(port).append("\n");
+        }
+        if (basegame != null) {
+            msg.append("Game: ").append(basegame).append("\n");
+        }
+        msg.append("\nPress back to return.");
+
+        Toast.makeText(this, msg.toString(), Toast.LENGTH_LONG).show();
     }
 
     @Override
