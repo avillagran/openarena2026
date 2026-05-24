@@ -1,35 +1,29 @@
 cmake_minimum_required(VERSION 3.22.1)
 project("openarena2026")
 
-# Path to the engine source (repo root)
-set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/../../../../..)
+# Engine source is at repo root
+set(ENGINE_DIR ${CMAKE_SOURCE_DIR}/../../../../../..)
 
-# Android-specific settings
-set(ANDROID TRUE)
-set(BUILD_STANDALONE 1)
-set(BUILD_CLIENT 1)
-set(BUILD_SERVER 0)
-set(BUILD_GAME_SO 0)
-set(BUILD_GAME_QVM 0)
-set(USE_OPENGLES 1)
-set(USE_INTERNAL_SDL 0)
-set(USE_RENDERER_DLOPEN 0)
+# Android-specific engine settings
+set(BUILD_STANDALONE ON CACHE BOOL "" FORCE)
+set(BUILD_CLIENT ON CACHE BOOL "" FORCE)
+set(BUILD_SERVER OFF CACHE BOOL "" FORCE)
+set(BUILD_RENDERER_GL1 OFF CACHE BOOL "" FORCE)
+set(BUILD_RENDERER_GL2 ON CACHE BOOL "" FORCE)
+set(BUILD_GAME_LIBRARIES OFF CACHE BOOL "" FORCE)
+set(BUILD_GAME_QVMS OFF CACHE BOOL "" FORCE)
+set(USE_RENDERER_DLOPEN OFF CACHE BOOL "" FORCE)
+set(USE_OPENAL OFF CACHE BOOL "" FORCE)
+set(USE_VOIP OFF CACHE BOOL "" FORCE)
+set(USE_MUMBLE OFF CACHE BOOL "" FORCE)
+set(USE_FREETYPE OFF CACHE BOOL "" FORCE)
+set(USE_CODEC_VORBIS OFF CACHE BOOL "" FORCE)
+set(USE_CODEC_OPUS OFF CACHE BOOL "" FORCE)
+set(USE_HTTP OFF CACHE BOOL "" FORCE)
+set(USE_INTERNAL_SDL OFF CACHE BOOL "" FORCE)
 
-# Find SDL2
-find_package(SDL2 REQUIRED)
-
-# Include engine CMake
+# Include the engine CMakeLists.txt
 add_subdirectory(${ENGINE_DIR} engine-build)
 
-# Create our wrapper library that exports the native activity entry point
-add_library(openarena2026 SHARED
-    native-main.c
-)
-
-target_link_libraries(openarena2026
-    SDL2::SDL2
-    android
-    log
-    EGL
-    GLESv2
-)
+# The engine will build libraries we can link against.
+# For now we rely on the engine's own build targets.
