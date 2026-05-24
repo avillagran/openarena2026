@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String SERVER_CTF = "q3ctf.ggup.cl";
     private static final int PORT_CTF = 27961;
 
+    private boolean hasOpenArenaAssets = false;
+    private boolean hasQ3Assets = false;
+
     private ActivityResultLauncher<Intent> importLauncher;
     private ActivityResultLauncher<String[]> permissionLauncher;
 
@@ -37,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        checkOpenArenaAssets();
+        checkAssets();
 
         Button btnPlay = findViewById(R.id.btnPlay);
         Button btnImportQ3 = findViewById(R.id.btnImportQ3);
@@ -83,22 +86,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void checkOpenArenaAssets() {
+    private void checkAssets() {
         File baseoa = OpenArenaApp.getGameDataDir();
-        File[] pk3s = baseoa.listFiles((dir, name) -> name.endsWith(".pk3"));
-        if (pk3s == null || pk3s.length == 0) {
-            showAssetMissingDialog();
+        File[] oaPk3s = baseoa.listFiles((dir, name) -> name.endsWith(".pk3"));
+        hasOpenArenaAssets = (oaPk3s != null && oaPk3s.length > 0);
+
+        File baseq3 = OpenArenaApp.getQ3DataDir();
+        File[] q3Pk3s = baseq3.listFiles((dir, name) -> name.endsWith(".pk3"));
+        hasQ3Assets = (q3Pk3s != null && q3Pk3s.length > 0);
+
+        if (!hasOpenArenaAssets && !hasQ3Assets) {
+            showNoAssetsDialog();
+        } else if (hasQ3Assets && !hasOpenArenaAssets) {
+            Toast.makeText(this, "Quake III Arena assets detected!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void showAssetMissingDialog() {
+    private void showNoAssetsDialog() {
         new AlertDialog.Builder(this)
-            .setTitle("Assets Not Found")
-            .setMessage("OpenArena assets not found. You can:\n\n" +
-                       "1. Download them now (~400 MB)\n" +
-                       "2. Place .pk3 files manually in:\n" + OpenArenaApp.getGameDataDir().getAbsolutePath() + "\n\n" +
-                       "3. Import Quake III Arena pak files via Import Q3A")
-            .setPositiveButton("Download Now", (dialog, which) -> downloadAssets())
+            .setTitle("No Game Assets Found")
+            .setMessage("You need game assets to play. Choose an option:\n\n" +
+                       "1. Download OpenArena (free, ~400 MB)\n" +
+                       "2. Import Quake III Arena files\n" +
+                       "3. Place .pk3 files manually")
+            .setPositiveButton("Download OpenArena", (dialog, which) -> downloadAssets())
+            .setNeutralButton("Import Q3A", (dialog, which) -> startQ3Import())
             .setNegativeButton("Cancel", null)
             .show();
     }
@@ -106,20 +118,42 @@ public class MainActivity extends AppCompatActivity {
     private void downloadAssets() {
         new AssetDownloader(this, OpenArenaApp.getGameDataDir(), success -> {
             if (success) {
+                hasOpenArenaAssets = true;
                 Toast.makeText(this, "Ready to play!", Toast.LENGTH_SHORT).show();
             }
         }).execute();
     }
 
     private void launchGame() {
+        if (!hasOpenArenaAssets && !hasQ3Assets) {
+            showNoAssetsDialog();
+            return;
+        }
+
         Intent intent = new Intent(this, GameActivity.class);
+
+        // If only Q3A assets are present, launch in Q3 mode
+        if (!hasOpenArenaAssets && hasQ3Assets) {
+            intent.putExtra("basegame", "baseq3");
+        }
+
         startActivity(intent);
     }
 
     private void launchGameConnect(String server, int port) {
+        if (!hasOpenArenaAssets && !hasQ3Assets) {
+            showNoAssetsDialog();
+            return;
+        }
+
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("server", server);
         intent.putExtra("port", port);
+
+        if (!hasOpenArenaAssets && hasQ3Assets) {
+            intent.putExtra("basegame", "baseq3");
+        }
+
         startActivity(intent);
     }
 
@@ -165,6 +199,9 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Imported: " + fileName, Toast.LENGTH_SHORT).show();
             Log.i(TAG, "Imported Q3 asset to: " + destFile.getAbsolutePath());
 
+            // Re-check assets after import
+            checkAssets();
+
         } catch (IOException e) {
             Log.e(TAG, "Error importing file", e);
             Toast.makeText(this, "Import error: " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -182,6 +219,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showServers() {
+        if (!hasOpenArenaAssets && !hasQ3Assets) {
+            showNoAssetsDialog();
+            return;
+        }
+
         final CharSequence[] servers = {
             SERVER_Q3 + ":" + PORT_Q3 + " (FFA/TDM)",
             SERVER_CTF + ":" + PORT_CTF + " (CTF)",
