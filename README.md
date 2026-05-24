@@ -21,14 +21,23 @@ You can also connect to any other Quake 3 / OpenArena server via the in-game con
 
 ## Assets
 
-### OpenArena (Default - GPL)
-The app includes free OpenArena 0.8.8 assets by default. Place `.pk3` files in:
+There are **3 ways** to get game assets:
+
+### 1. In-App Download (Recommended)
+Launch the app and tap **"Download Now"** when prompted. This downloads OpenArena 0.8.8 assets (~400 MB) automatically. This only needs to be done once.
+
+### 2. Manual (For developers/building from source)
+Place OpenArena `.pk3` files manually in:
 ```
 Android/data/cl.villagranquiroz.openarena2026/files/baseoa/
 ```
+Or run:
+```bash
+./scripts/download-assets.sh
+```
 
-### Quake III Arena (Optional - Import your own)
-If you own Quake III Arena, import your `pak0.pk3` - `pak8.pk3` files via the **Import Q3A** button in the launcher.
+### 3. Quake III Arena (Import your own)
+If you own Quake III Arena, tap **"Import Q3A"** in the launcher and select your original `pak0.pk3` through `pak8.pk3` files. The game will detect them and let you play with original maps and models.
 
 > We do NOT distribute copyrighted assets. You must provide your own Q3A files.
 

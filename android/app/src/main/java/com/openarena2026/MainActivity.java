@@ -94,10 +94,21 @@ public class MainActivity extends AppCompatActivity {
     private void showAssetMissingDialog() {
         new AlertDialog.Builder(this)
             .setTitle("Assets Not Found")
-            .setMessage("OpenArena assets not found. " +
-                       "Place the .pk3 files in: " + OpenArenaApp.getGameDataDir().getAbsolutePath())
-            .setPositiveButton("OK", null)
+            .setMessage("OpenArena assets not found. You can:\n\n" +
+                       "1. Download them now (~400 MB)\n" +
+                       "2. Place .pk3 files manually in:\n" + OpenArenaApp.getGameDataDir().getAbsolutePath() + "\n\n" +
+                       "3. Import Quake III Arena pak files via Import Q3A")
+            .setPositiveButton("Download Now", (dialog, which) -> downloadAssets())
+            .setNegativeButton("Cancel", null)
             .show();
+    }
+
+    private void downloadAssets() {
+        new AssetDownloader(this, OpenArenaApp.getGameDataDir(), success -> {
+            if (success) {
+                Toast.makeText(this, "Ready to play!", Toast.LENGTH_SHORT).show();
+            }
+        }).execute();
     }
 
     private void launchGame() {
