@@ -49,12 +49,13 @@ android {
         }
     }
 
-    externalNativeBuild {
-        cmake {
-            path file('src/main/cpp/CMakeLists.txt')
-            version '3.22.1'
-        }
-    }
+    // Native build temporarily disabled while engine CMake is configured for Android
+    // externalNativeBuild {
+    //     cmake {
+    //         path file('src/main/cpp/CMakeLists.txt')
+    //         version '3.22.1'
+    //     }
+    // }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
