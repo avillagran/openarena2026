@@ -43,3 +43,16 @@ profile
 *.opensdf
 *.suo
 /.vs
+
+# Android
+android/.gradle
+android/local.properties
+android/.idea
+android/*.iml
+android/app/build
+android/app/.externalNativeBuild
+android/app/.cxx
+android/build
+android/captures
+android/*.apk
+android/*.aab

@@ -1,3 +1,59 @@
+# OpenArena2026
+
+**Author**: Andres Villagran <andres@villagranquiroz.cl>
+
+A modern Android fork of **OpenArena**, based on the [openarena-ioq3](https://github.com/OpenArena-Ioq3/openarena-ioq3) engine.
+
+## Featured Servers - ggup.cl
+
+Quick-connect to our community servers:
+- **q3.ggup.cl:27960** - FFA / TDM
+- **q3ctf.ggup.cl:27961** - Capture The Flag
+
+## Android Port
+
+This branch adds a native Android client to the OpenArena engine.
+
+### Features
+- **Modern engine**: Based on ioquake3 with SDL2, OpenGL ES 2+, and CMake
+- **Native Android**: Built with NDK for ARM64 and ARMv7 architectures
+- **Phones & tablets**: Full support for different screen sizes
+- **Optimized touch controls**: Virtual joystick, configurable buttons
+- **Import your assets**: If you own Quake III Arena, import the `pak` files to play with original assets
+
+### Game Assets
+
+By default, OpenArena2026 includes the free **OpenArena 0.8.8** assets (GPL license).
+
+If you want to play with original **Quake III Arena** assets:
+1. Go to **Settings → Import Assets**
+2. Select `pak0.pk3`, `pak1.pk3`, `pak2.pk3`, `pak3.pk3` from your original Quake 3 copy
+3. The game will auto-detect them and let you play with original maps and models
+
+> **Legal note**: We do not distribute any copyrighted assets. Quake III Arena assets must be provided by the user who legally owns the game.
+
+### Building for Android
+
+#### Requirements
+- Android Studio Ladybug or newer
+- Android NDK r26b or newer
+- CMake 3.22+
+- Android SDK 14+ (API 34)
+
+#### Steps
+```bash
+git clone --recursive https://github.com/avillagran/openarena2026.git
+cd openarena2026
+# Open android/ in Android Studio and build
+```
+
+#### Assets
+Download OpenArena 0.8.8 assets and place them in `assets/baseoa/`.
+
+---
+
+*Below is the original openarena-ioq3 documentation:*
+
 # OpenArena Ioq3
 
 [![Build](https://github.com/OpenArena-Ioq3/openarena-ioq3/actions/workflows/build.yml/badge.svg)](https://github.com/OpenArena-Ioq3/openarena-ioq3/actions/workflows/build.yml)
